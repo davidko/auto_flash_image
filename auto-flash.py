@@ -56,11 +56,12 @@ def flash_sd_card(my_linkbot):
     with open("{}.md5sum".format(IMAGE_FILENAME), 'r') as md5file:
         md5sum = md5file.read().split()[0]
 
+    logging.info("Beginning SD card integrity check...")
     with open('/dev/sda', 'rb') as sd_card_image:
         calculated_md5 = hashlib.md5()
         bytes_left = size
         while bytes_left > 0:
-            readsize = min(128, bytes_left)
+            readsize = min(512, bytes_left)
             chunk = sd_card_image.read(readsize)
             bytes_left -= readsize
             if not chunk:
@@ -71,6 +72,7 @@ def flash_sd_card(my_linkbot):
     if digest != md5sum:
         # Turn the robot red
         logging.info("Setting led color to red...")
+        logging.info("Got md5sum: {}, expected: {}".format(digest, md5sum))
         my_linkbot.led.set_color(255, 0, 0)
 
     else:
