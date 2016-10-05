@@ -9,7 +9,7 @@ import subprocess
 import time
 import traceback
 
-SD_CARD_DEVICE = '/dev/sda1'
+SD_CARD_DEVICE = '/dev/sdc'
 
 force_flash_command = False
 
@@ -33,7 +33,7 @@ def flash_sd_card(my_linkbot):
     # First, try to unmount the sd card
     try:
         logging.debug('Unmounting sd card...')
-        subprocess.check_call(["udisks", "--unmount", SD_CARD_DEVICE])
+        subprocess.check_call(["udisks", "--unmount", SD_CARD_DEVICE+'1'])
     except Exception as e:
         logging.warning('Failed to umount sd card: {}'.format(traceback.format_exc()))
 
@@ -43,7 +43,7 @@ def flash_sd_card(my_linkbot):
 
     # Now, run the dd command
     logging.info("Running dd command...")
-    subprocess.check_call(["dd", "if={}".format(IMAGE_FILENAME), "of=/dev/sda", "bs=4M"])
+    subprocess.check_call(["dd", "if={}".format(IMAGE_FILENAME), "of="+SD_CARD_DEVICE, "bs=4M"])
 
     # run `sync`
     logging.info("Running sync command...")
@@ -58,7 +58,7 @@ def flash_sd_card(my_linkbot):
         md5sum = md5file.read().split()[0]
 
     logging.info("Beginning SD card integrity check...")
-    with open('/dev/sda', 'rb') as sd_card_image:
+    with open(SD_CARD_DEVICE, 'rb') as sd_card_image:
         calculated_md5 = hashlib.md5()
         bytes_left = size
         while bytes_left > 0:
@@ -82,7 +82,7 @@ def flash_sd_card(my_linkbot):
         my_linkbot.led.set_color(0, 255, 0)
 
     # Wait for the SD card to be removed
-    while disk_exists(SD_CARD_DEVICE):
+    while disk_exists(SD_CARD_DEVICE+'1'):
         logging.info("SD card still plugged in. Waiting 1 second...")
         time.sleep(1)
 
@@ -107,7 +107,7 @@ def main():
     global force_flash_command
     while True:
         # Now, we should check to see if the SD card is plugged in
-        if disk_exists(SD_CARD_DEVICE) or force_flash_command:
+        if disk_exists(SD_CARD_DEVICE+'1') or force_flash_command:
             force_flash_command = False
             logging.debug('SD card detected.')
             try:
