@@ -15,7 +15,8 @@ force_flash_command = False
 
 logging.basicConfig(level=logging.DEBUG)
 
-IMAGE_FILENAME='barobo-odroid-20160913.img'
+INDICATOR_LINKBOT_ID = '8584'
+IMAGE_FILENAME='barobo-rpi-20160915.img'
 
 def button_callback(button, state, timestamp):
     global force_flash_command
@@ -93,7 +94,7 @@ def main():
     # First, see if we can connect to a Linkbot
     while True:
         try:
-            l = linkbot.Linkbot('locl')
+            l = linkbot.Linkbot(INDICATOR_LINKBOT_ID)
             l.led.set_color(0, 0, 255)
             l.buttons.set_event_handler(button_callback)
             break
