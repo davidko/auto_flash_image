@@ -9,14 +9,14 @@ import subprocess
 import time
 import traceback
 
-SD_CARD_DEVICE = '/dev/sdc'
+SD_CARD_DEVICE = '/dev/sdb'
 
 force_flash_command = False
 
 logging.basicConfig(level=logging.DEBUG)
 
 INDICATOR_LINKBOT_ID = '8584'
-IMAGE_FILENAME='barobo-rpi-20160915.img'
+IMAGE_FILENAME='barobo-rpi-20161212.img'
 
 def button_callback(button, state, timestamp):
     global force_flash_command
@@ -31,11 +31,13 @@ def disk_exists(path):
 
 def flash_sd_card(my_linkbot):
     # First, try to unmount the sd card
+    '''
     try:
         logging.debug('Unmounting sd card...')
         subprocess.check_call(["udisks", "--unmount", SD_CARD_DEVICE+'1'])
     except Exception as e:
         logging.warning('Failed to umount sd card: {}'.format(traceback.format_exc()))
+    '''
 
     # Turn the robot led yellow
     logging.info("Setting LED to yellow...")
